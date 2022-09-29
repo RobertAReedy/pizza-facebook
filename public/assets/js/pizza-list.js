@@ -13,10 +13,10 @@ const printPizza = ({ _id, pizzaName, toppings, size, commentCount, createdBy, c
           <h5 class="text-dark">Toppings</h5>
           <ul>
             ${toppings
-              .map(topping => {
-                return `<li>${topping}</li>`;
-              })
-              .join('')}
+      .map(topping => {
+        return `<li>${topping}</li>`;
+      })
+      .join('')}
           </ul>
           <a class="btn display-block w-100 mt-auto" href="/pizza?id=${_id}">See the discussion.</a>
         </div>
@@ -26,3 +26,18 @@ const printPizza = ({ _id, pizzaName, toppings, size, commentCount, createdBy, c
 
   $pizzaList.innerHTML += pizzaCard;
 };
+
+fetch("/api/pizzas", {
+  method: "GET",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  }
+})
+  .then(res => res.json())
+  .then(pizzas => {
+    pizzas.forEach(pizza => {
+      printPizza(pizza);
+    });
+  })
+  .catch(error => console.log(error));
