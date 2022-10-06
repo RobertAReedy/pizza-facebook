@@ -85,6 +85,28 @@ function handleNewCommentSubmit(event) {
   }
 
   const formData = { commentBody, writtenBy };
+
+  fetch("/api/comments/" + pizzaId, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Something went wrong during fetch call.");
+      }
+      response.json();
+    })
+    .then(commentResponse => {
+      console.log(commentResponse);
+      location.reload();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 function handleNewReplySubmit(event) {
@@ -104,6 +126,28 @@ function handleNewReplySubmit(event) {
   }
 
   const formData = { writtenBy, replyBody };
+
+  fetch(`/api/comments/${pizzaId}/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
+      }
+      response.json();
+    })
+    .then(commentResponse => {
+      console.log(commentResponse);
+      location.reload();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 $backBtn.addEventListener('click', function () {
@@ -121,7 +165,11 @@ fetch("/api/pizzas/" + window.location.toString().split("?id=")[1], {
   .then(pizza => {
     printPizza(pizza);
   })
-  .catch(error => console.log(error));
+  .catch(error => {
+    console.log(error);
+    alert("Cannot find a pizza with this id.");
+    window.history.back;
+  });
 
 $newCommentForm.addEventListener('submit', handleNewCommentSubmit);
 $commentSection.addEventListener('submit', handleNewReplySubmit);
